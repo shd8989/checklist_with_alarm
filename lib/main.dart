@@ -11,10 +11,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Welcome to Flutter',
+      title: 'HYUNDAI department store',
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Welcome to Flutter'),
+          title: const Text('HYUNDAI department store'),
         ),
         body: const Center(
           child: RandomWords(),
@@ -48,7 +48,11 @@ class _RandomWordsState extends State<RandomWords> {
         }
         return ListTile(
           title: Text(
-            _suggestions[index].asPascalCase,
+//            _suggestions[index].asPascalCase,
+            (index == 0 ? 'PC, ERP, DRM 등 로그인에 필요한 비밀번호를 부착했나요?' :
+            index == 1 ? '퇴근 시 중요정보(매출 및 개인정보)를 책상위에 방치했나요?' :
+            index == 2 ? '퇴근 시 개인 서랍장을 시건했나요?' :
+            index == 3 ? '퇴근 시 PC 종료를 했나요?' : ''),
             style: _biggerFont,
           ),
         );
