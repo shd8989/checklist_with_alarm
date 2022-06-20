@@ -10,25 +10,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'HYUNDAI department store',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('HYUNDAI department store'),
-        ),
-        body: const Center(
-          child: RandomWords(),
-        ),
-      ),
+      home: RandomWords()
     );
   }
-}
-
-class RandomWords extends StatefulWidget {
-  const RandomWords({ Key? key }) : super(key: key);
-
-  @override
-  State<RandomWords> createState() => _RandomWordsState();
 }
 
 class _RandomWordsState extends State<RandomWords> {
@@ -38,43 +24,95 @@ class _RandomWordsState extends State<RandomWords> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemBuilder: /*1*/ (context, i) {
-        if (i.isOdd) return const Divider(); /*2*/
-
-        final index = i ~/ 2; /*3*/
-        if (index >= _suggestions.length) {
-          _suggestions.addAll(generateWordPairs().take(10)); /*4*/
-        }
-
-        final alreadySaved = _saved.contains(_suggestions[index]);
-
-        return ListTile(
-          title: Text(
-//            _suggestions[index].asPascalCase,
-            (index == 0 ? 'PC, ERP, DRM 등 로그인에 필요한 비밀번호를 부착했나요?' :
-            index == 1 ? '퇴근 시 중요정보(매출 및 개인정보)를 책상위에 방치했나요?' :
-            index == 2 ? '퇴근 시 개인 서랍장을 시건했나요?' :
-            index == 3 ? '퇴근 시 PC 종료를 했나요?' : ''),
-            style: _biggerFont,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Startup Name Generator'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.list),
+            onPressed: _pushSaved,
+            tooltip: 'Saved Suggestions',
           ),
-          trailing: Icon(    // NEW from here ...
-            alreadySaved ? Icons.favorite : Icons.favorite_border,
-            color: alreadySaved ? Colors.red : null,
-            semanticLabel: alreadySaved ? 'Remove from saved' : 'Save',
-          ),
-          onTap: () {          // NEW from here ...
-            setState(() {
-              if (alreadySaved) {
-                _saved.remove(_suggestions[index]);
-              } else {
-                _saved.add(_suggestions[index]);
-              }
-            });                // to here.
-          },
-        );
-      },
+        ],
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemBuilder: (context, i) {
+          if (i.isOdd) return const Divider();
+
+          final index = i ~/ 2;
+          if (index >= _suggestions.length) {
+            _suggestions.addAll(generateWordPairs().take(10));
+          }
+
+          final alreadySaved = _saved.contains(_suggestions[index]);
+
+          return ListTile(
+            title: Text(
+              // _suggestions[index].asPascalCase,
+              (index == 0 ? 'PC, ERP, DRM 등 로그인에 필요한 비밀번호를 부착했나요?' :
+              index == 1 ? '퇴근 시 중요정보(매출 및 개인정보)를 책상위에 방치했나요?' :
+              index == 2 ? '퇴근 시 개인 서랍장을 시건했나요?' :
+              index == 3 ? '퇴근 시 PC 종료를 했나요?' : ''),
+              style: _biggerFont,
+            ),
+            trailing: Icon(
+              alreadySaved ? Icons.favorite : Icons.favorite_border,
+              color: alreadySaved ? Colors.red : null,
+              semanticLabel: alreadySaved ? 'Remove from saved' : 'Save',
+            ),
+            onTap: () {
+              setState(() {
+                if (alreadySaved) {
+                  _saved.remove(_suggestions[index]);
+                } else {
+                  _saved.add(_suggestions[index]);
+                }
+              });
+            },
+          );
+        },
+      ),
     );
   }
+
+  void _pushSaved() {
+    Navigator.of(context).push(
+      // Add lines from here...
+      MaterialPageRoute<void>(
+        builder: (context) {
+          final tiles = _saved.map(
+                (pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+          final divided = tiles.isNotEmpty
+              ? ListTile.divideTiles(
+            context: context,
+            tiles: tiles,
+          ).toList()
+              : <Widget>[];
+
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Saved Suggestions'),
+            ),
+            body: ListView(children: divided),
+          );
+        },
+      ), // ...to here.
+    );
+  }
+}
+
+class RandomWords extends StatefulWidget {
+  const RandomWords({super.key});
+
+  @override
+  State<RandomWords> createState() => _RandomWordsState();
 }
